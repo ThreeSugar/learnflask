@@ -8,6 +8,8 @@ name = "pypi"
 [packages]
 
 requests = "*"
+flask-sqlalchemy = "*"
+flask-wtf = "*"
 
 
 [dev-packages]
