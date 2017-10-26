@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, session, redirect, url_for
-from models import db, User
-from forms import SignupForm, LoginForm
+from models import db, User, Place
+from forms import SignupForm, LoginForm, AddressForm
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:class@localhost/learningflask'
@@ -38,12 +38,36 @@ def signup():
     elif request.method == "GET":
         return render_template("signup.html", form=form)
 
-@app.route('/home')
+@app.route('/home', methods=["GET", "POST"])
 def home():
+    form = AddressForm()
+
+    places = []
+    my_coordinates = (37.4221, -122.0844)
+
     if 'email' not in session:
         return redirect(url_for('login'))
     else:
-         return render_template('home.html')
+         return render_template('home.html', form=form, my_coordinates=my_coordinates, places = places) 
+
+    if request.method == 'POST':
+        if form.validate() == False:
+            return render_template('home.html', form=form, my_coordinates=my_coordinates, places = places) 
+        else:
+            #get address
+            address = form.address.data
+
+            #query for places around it
+            p = Place()
+            my_coordinates = p.address_to_latlng(address)
+            places = p.query(address)
+
+            #return those results
+            return render_template('home.html', form=form, my_coordinates=my_coordinates, places = place) 
+            
+    
+    elif request.method == 'GET':
+        return render_template('home.html', form=form)
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
