@@ -13,4 +13,8 @@ class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired("Please enter your email address."), Email("Please enter your email address.")])
     password = PasswordField('Password', validators=[DataRequired("Please enter a password.")])
     submit = SubmitField('Sign In')
+
+class AddressForm(FlaskForm):
+    address = StringField('Address', validators=[DataRequired('Please enter an address.')])
+    submit = SubmitField("Search")
     
